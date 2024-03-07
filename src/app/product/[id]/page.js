@@ -1,10 +1,11 @@
-"use client";
 import React from "react";
-import { useParams } from "next/navigation";
-import { getSingleProductData } from "../../../Services/generalService";
-export default async function SingleProductList() {
-  const { id } = useParams();
-  const productData = await getSingleProductData(id);
+import {
+  getSingleProductData,
+  getProductData,
+} from "../../../Services/generalService";
+export const revalidate = 10;
+export default async function SingleProductList({ params }) {
+  const productData = await getSingleProductData(params.id);
   return (
     <div>
       {productData ? (
@@ -17,4 +18,10 @@ export default async function SingleProductList() {
       )}
     </div>
   );
+}
+export async function generateStaticParams() {
+  const productsList = await getProductData();
+  return productsList.products.map((data) => ({
+    id: data.id.toString(),
+  }));
 }
